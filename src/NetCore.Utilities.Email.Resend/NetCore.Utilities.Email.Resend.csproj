@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>ICG.NetCore.Utilities.Email.Resend</RootNamespace>
+	<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>ICG.NetCore.Utilities.Email.Resend</PackageId>
+    <Title>NetCore Utilities Email Resend</Title>
+    <Description>A library providing an easy to use set of functions rounding the Resend API for email delivery.</Description>
+    <Copyright>Copyright 2025, IowaComputerGurus, Inc. All Rights Reserved</Copyright>
+    <PackageProjectUrl>https://github.com/IowaComputerGurus/netcore.utilities.email.resend</PackageProjectUrl>
+    <PackageTags>aspnetcore;utility;email</PackageTags>
+    <RepositoryUrl>https://github.com/IowaComputerGurus/netcore.utilities.email.resend</RepositoryUrl>
+    <Authors>MitchelSellers;IowaComputerGurus</Authors>
+    <Owners>IowaComputerGurus</Owners>
+	  <PackageIcon>icgAppIcon.png</PackageIcon>
+    <IsPackable>True</IsPackable>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+  </PropertyGroup>
+
+	<PropertyGroup Condition="'$GITHUB_ACTIONS)' == 'true'">
+		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="icgAppIcon.png" Pack="true" PackagePath="\" />
+	</ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="icg.netcore.utilities.email" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Resend" Version="0.1.4" />
+  </ItemGroup>
+
+</Project>
