@@ -4,7 +4,7 @@
 
 ![](https://img.shields.io/nuget/v/icg.netcore.utilities.email.resend.svg) ![](https://img.shields.io/nuget/dt/icg.netcore.utilities.email.resend.svg)
 
-This library provides an easy to use implementation of Resend based email delivery.  This abstraction with proper interfaces allows email implementation inside of your project with little effort and easy to manage integration, and boasts features such as automatic environment name appending as well as robust email templates.
+This library provides an easy-to-use implementation of Resend-based email delivery.  This abstraction with proper interfaces allows email implementation inside of your project with little effort and easy-to-manage integration, and boasts features such as automatic environment name appending as well as robust email templates.
 
 This package depends on the ICG.NetCore.Utilities.Email project for template implementation
 
@@ -13,6 +13,9 @@ The following additional NuGet packages are installed with this extension.
 
 * [Resend](https://www.nuget.org/packages/resend/) - For email delivery
 * [ICG NET Core Utilities Email](https://github.com/IowaComputerGurus/netcore.utilities.email) - For Email Template Configuration
+
+### Resend Account
+You must have a [Resend Account](https://www.resend.com) and an API key value to utilize this service.
 
 ## Usage
 
@@ -28,14 +31,13 @@ To setup the needed dependency injection items for this library, add the followi
 services.UseIcgNetCoreUtilitiesEmailResend();
 ```
 
-Additionally you must specify the needed configuration elements within your AppSettings.json file
+Additionally, you must specify the needed configuration elements within your AppSettings.json file
 
 ``` json
   "ResendServiceOptions": {
     "AdminEmail": "test@test.com",
     "AdminName": "John Smith",
     "ResendApiKey": "YourKey",
-    "AdditionalApiKeys": { "SpecialSender": "SpecialKey" },
     "AlwaysTemplateEmails": true,
     "AddEnvironmentSuffix": true
   },
@@ -51,7 +53,6 @@ Additionally you must specify the needed configuration elements within your AppS
 | AdminEmail | This is the email address used as the "from" address and also for any usage of the "SendToAdministrator" option |
 | AdminName | If specified this is the name that will be used for the "From" address on all outbound emails |
 | ResendApiKey | The API Key to use for default sending of email addresses |
-| AdditionalApiKeys | These are name/value pairs of additional API keys that could be used for sending emails.  Totally optional |
 | AlwaysTemplateEmails | If selected ALL emails sent will be templated, by default using the "DefaultTemplate" as configured |
 | AddEnvironmentSuffix | If selected, all outbound emails sent from non-production addresses will have the environment name added to the end of the subject |
 | DefaultTemplatePath | The path, relative to the application root, where the default HTML template can be found for emails |
@@ -60,7 +61,7 @@ Additionally you must specify the needed configuration elements within your AppS
 
 ### Usage
 
-Usage is primarly completed by injecting the IEmailService interface to your respective project, one injected emails can be sent with a single line of code. 
+Usage is primarily completed by injecting the IEmailService interface into your respective project, and one injected email can be sent with a single line of code. 
 
 ``` csharp
 _ResendService.SendEmail("recipient@me.com", "My Subject", "<p>Hello!</p>");
