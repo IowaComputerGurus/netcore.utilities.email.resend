@@ -180,6 +180,10 @@ public class ResendService : IEmailService
             throw new NotSupportedException("This service does not support a custom sender key at this time");
         }
 
+        if (tokens != null)
+            foreach (var item in tokens)
+                bodyHtml = bodyHtml.Replace(item.Key, item.Value);
+
         //Get the message to send
         var toSend = _messageBuilder.CreateMessageWithAttachment(_serviceOptions.AdminEmail, _serviceOptions.AdminName,
             toAddress,
