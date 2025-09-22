@@ -102,7 +102,7 @@ public class ResendMessageBuilder : IResendMessageBuilder
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogWarning(ex, $"Unable to add {item} to email copy list");
+                    _logger.LogWarning(ex, "Unable to add {item} to email copy list", item);
                 }
             }
         }
@@ -144,12 +144,14 @@ public class ResendMessageBuilder : IResendMessageBuilder
         var toSend = CreateMessage(from, fromName, to, cc, subject, bodyHtml, templateName);
 
         //Attach file
-        toSend.Attachments = new List<EmailAttachment>();
-        toSend.Attachments.Add(new EmailAttachment
-        {
-            Content = fileContent,
-            Filename = fileName,
-        });
+        toSend.Attachments =
+        [
+            new EmailAttachment
+            {
+                Content = fileContent,
+                Filename = fileName,
+            },
+        ];
 
         return toSend;
     }
