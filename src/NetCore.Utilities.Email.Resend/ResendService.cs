@@ -192,4 +192,52 @@ public class ResendService : IEmailService
         //Send
         return _resendSender.SendMessage(toSend);
     }
+
+    /// <inheritdoc />
+    public Task<bool> SendWithCustomFromEmailAsync(string fromAddress, string fromName, string toAddress, string subject, string bodyHtml)
+    {
+        return SendWithCustomFromEmailAsync(fromAddress, fromName, toAddress, null, subject, bodyHtml, null, "");
+    }
+
+    /// <inheritdoc />
+    public Task<bool> SendWithCustomFromEmailAsync(string fromAddress, string fromName, string toAddress, string subject, string bodyHtml, List<KeyValuePair<string, string>> tokens)
+    {
+        return SendWithCustomFromEmailAsync(fromAddress, fromName, toAddress, null, subject, bodyHtml, tokens, "");
+    }
+
+    /// <inheritdoc />
+    public Task<bool> SendWithCustomFromEmailAsync(string fromAddress, string fromName, string toAddress, IEnumerable<string> ccAddressList, string subject, string bodyHtml)
+    {
+        return SendWithCustomFromEmailAsync(fromAddress, fromName, toAddress, ccAddressList, subject, bodyHtml, null, "");
+    }
+
+    /// <inheritdoc />
+    public Task<bool> SendWithCustomFromEmailAsync(string fromAddress, string fromName, string toAddress, IEnumerable<string> ccAddressList, string subject, string bodyHtml, List<KeyValuePair<string, string>> tokens)
+    {
+        return SendWithCustomFromEmailAsync(fromAddress, fromName, toAddress, ccAddressList, subject, bodyHtml, tokens, "");
+    }
+
+    /// <inheritdoc />
+    public Task<bool> SendWithCustomFromEmailAsync(string fromAddress, string fromName, string toAddress, IEnumerable<string> ccAddressList, string subject, string bodyHtml, List<KeyValuePair<string, string>> tokens, string templateName, string senderKeyName = "")
+    {
+        if (!string.IsNullOrEmpty(senderKeyName))
+            throw new NotSupportedException("This service does not support a custom sender key at this time");
+        if (tokens != null)
+            foreach (var item in tokens)
+                bodyHtml = bodyHtml.Replace(item.Key, item.Value);
+        var toSend = _messageBuilder.CreateMessage(fromAddress, fromName, toAddress, ccAddressList, subject, bodyHtml, templateName);
+        return _resendSender.SendMessage(toSend);
+    }
+
+    /// <inheritdoc />
+    public Task<bool> SendWithCustomFromEmailAndAttachmentAsync(string fromAddress, string fromName, string toAddress, IEnumerable<string> ccAddressList, string subject, byte[] fileContent, string fileName, string bodyHtml, List<KeyValuePair<string, string>> tokens, string templateName = "", string senderKeyName = "")
+    {
+        if (!string.IsNullOrEmpty(senderKeyName))
+            throw new NotSupportedException("This service does not support a custom sender key at this time");
+        if (tokens != null)
+            foreach (var item in tokens)
+                bodyHtml = bodyHtml.Replace(item.Key, item.Value);
+        var toSend = _messageBuilder.CreateMessageWithAttachment(fromAddress, fromName, toAddress, ccAddressList, fileContent, fileName, subject, bodyHtml, templateName);
+        return _resendSender.SendMessage(toSend);
+    }
 }
