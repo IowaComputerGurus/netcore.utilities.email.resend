@@ -262,5 +262,123 @@ namespace ICG.NetCore.Utilities.Email.Resend.Tests
             //Assets
             _ResendMessageBuilderMock.Verify();
         }
+
+        [Fact]
+        public void SendWithCustomFromEmailAsync_ShouldSend_WithBasicParameters()
+        {
+            var from = "from@test.com";
+            var fromName = "Sender";
+            var to = "to@test.com";
+            var subject = "subject";
+            var body = "body";
+            var returnMessage = new EmailMessage();
+            _ResendMessageBuilderMock.Setup(s => s.CreateMessage(from, fromName, to, null, subject, body, "")).Returns(returnMessage).Verifiable();
+            _ResendSenderMock.Setup(s => s.SendMessage(returnMessage)).ReturnsAsync(true).Verifiable();
+            var result = _service.SendWithCustomFromEmailAsync(from, fromName, to, subject, body).Result;
+            Assert.True(result);
+            _ResendMessageBuilderMock.Verify();
+            _ResendSenderMock.Verify();
+        }
+
+        [Fact]
+        public void SendWithCustomFromEmailAsync_ShouldSend_WithTokens()
+        {
+            var from = "from@test.com";
+            var fromName = "Sender";
+            var to = "to@test.com";
+            var subject = "subject";
+            var body = "body {Name}";
+            var tokens = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("{Name}", "Test") };
+            var expectedBody = "body Test";
+            var returnMessage = new EmailMessage();
+            _ResendMessageBuilderMock.Setup(s => s.CreateMessage(from, fromName, to, null, subject, expectedBody, "")).Returns(returnMessage).Verifiable();
+            _ResendSenderMock.Setup(s => s.SendMessage(returnMessage)).ReturnsAsync(true).Verifiable();
+            var result = _service.SendWithCustomFromEmailAsync(from, fromName, to, subject, body, tokens).Result;
+            Assert.True(result);
+            _ResendMessageBuilderMock.Verify();
+            _ResendSenderMock.Verify();
+        }
+
+        [Fact]
+        public void SendWithCustomFromEmailAsync_ShouldSend_WithCC()
+        {
+            var from = "from@test.com";
+            var fromName = "Sender";
+            var to = "to@test.com";
+            var cc = new List<string> { "cc@test.com" };
+            var subject = "subject";
+            var body = "body";
+            var returnMessage = new EmailMessage();
+            _ResendMessageBuilderMock.Setup(s => s.CreateMessage(from, fromName, to, cc, subject, body, "")).Returns(returnMessage).Verifiable();
+            _ResendSenderMock.Setup(s => s.SendMessage(returnMessage)).ReturnsAsync(true).Verifiable();
+            var result = _service.SendWithCustomFromEmailAsync(from, fromName, to, cc, subject, body).Result;
+            Assert.True(result);
+            _ResendMessageBuilderMock.Verify();
+            _ResendSenderMock.Verify();
+        }
+
+        [Fact]
+        public void SendWithCustomFromEmailAsync_ShouldSend_WithCCAndTokens()
+        {
+            var from = "from@test.com";
+            var fromName = "Sender";
+            var to = "to@test.com";
+            var cc = new List<string> { "cc@test.com" };
+            var subject = "subject";
+            var body = "body {Name}";
+            var tokens = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("{Name}", "Test") };
+            var expectedBody = "body Test";
+            var returnMessage = new EmailMessage();
+            _ResendMessageBuilderMock.Setup(s => s.CreateMessage(from, fromName, to, cc, subject, expectedBody, "")).Returns(returnMessage).Verifiable();
+            _ResendSenderMock.Setup(s => s.SendMessage(returnMessage)).ReturnsAsync(true).Verifiable();
+            var result = _service.SendWithCustomFromEmailAsync(from, fromName, to, cc, subject, body, tokens).Result;
+            Assert.True(result);
+            _ResendMessageBuilderMock.Verify();
+            _ResendSenderMock.Verify();
+        }
+
+        [Fact]
+        public void SendWithCustomFromEmailAsync_ShouldSend_WithAllParameters()
+        {
+            var from = "from@test.com";
+            var fromName = "Sender";
+            var to = "to@test.com";
+            var cc = new List<string> { "cc@test.com" };
+            var subject = "subject";
+            var body = "body {Name}";
+            var tokens = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("{Name}", "Test") };
+            var expectedBody = "body Test";
+            var template = "template";
+            var returnMessage = new EmailMessage();
+            _ResendMessageBuilderMock.Setup(s => s.CreateMessage(from, fromName, to, cc, subject, expectedBody, template)).Returns(returnMessage).Verifiable();
+            _ResendSenderMock.Setup(s => s.SendMessage(returnMessage)).ReturnsAsync(true).Verifiable();
+            var result = _service.SendWithCustomFromEmailAsync(from, fromName, to, cc, subject, body, tokens, template).Result;
+            Assert.True(result);
+            _ResendMessageBuilderMock.Verify();
+            _ResendSenderMock.Verify();
+        }
+
+        [Fact]
+        public void SendWithCustomFromEmailAndAttachmentAsync_ShouldSend_WithAllParameters()
+        {
+            var from = "from@test.com";
+            var fromName = "Sender";
+            var to = "to@test.com";
+            var cc = new List<string> { "cc@test.com" };
+            var subject = "subject";
+            var fileContent = Encoding.ASCII.GetBytes("Attachment");
+            var fileName = "file.txt";
+            var body = "body {Name}";
+            var tokens = new List<KeyValuePair<string, string>> { new KeyValuePair<string, string>("{Name}", "Test") };
+            var expectedBody = "body Test";
+            var template = "template";
+            var returnMessage = new EmailMessage();
+            _ResendMessageBuilderMock.Setup(s => s.CreateMessageWithAttachment(from, fromName, to, cc, fileContent, fileName, subject, expectedBody, template)).Returns(returnMessage).Verifiable();
+            _ResendSenderMock.Setup(s => s.SendMessage(returnMessage)).ReturnsAsync(true).Verifiable();
+            var result = _service.SendWithCustomFromEmailAndAttachmentAsync(from, fromName, to, cc, subject, fileContent, fileName, body, tokens, template).Result;
+            Assert.True(result);
+            _ResendMessageBuilderMock.Verify();
+            _ResendSenderMock.Verify();
+        }
     }
 }
