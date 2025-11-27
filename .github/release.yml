@@ -17,6 +17,7 @@ changelog:
       labels:
         - administrative
         - documentation
+        - dependencies
     - title: Other Changes
       labels:
         - "*"
