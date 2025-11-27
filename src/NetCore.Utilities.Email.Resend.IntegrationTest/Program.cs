@@ -1,11 +1,10 @@
 ﻿using ICG.NetCore.Utilities.Email;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace NetCore.Utilities.Email.Resend.IntegrationTest
 {
-    internal class Program
+    internal static class Program
     {
         static void Main(string[] args)
         {
@@ -30,20 +29,12 @@ namespace NetCore.Utilities.Email.Resend.IntegrationTest
         void Run();
     }
 
-    public class MyService : IMyService
+    public class MyService(IEmailService emailService) : IMyService
     {
-        private readonly ILogger<MyService> _logger;
-        private readonly IEmailService _emailService;
-
-        public MyService(ILogger<MyService> logger, IEmailService emailService)
-        {
-            _logger = logger;
-            _emailService = emailService;
-        }
-
         public void Run()
         {
-            var result = _emailService.SendMessageAsync("test@test.com", "Testing", "<p>Hello from Resend</p>").Result;
+            var result = emailService.SendMessageAsync("test@test.com", "Testing", "<p>Hello from Resend</p>").Result;
+            Console.WriteLine($"Email sent result: {result}");
         }
     }
 }
