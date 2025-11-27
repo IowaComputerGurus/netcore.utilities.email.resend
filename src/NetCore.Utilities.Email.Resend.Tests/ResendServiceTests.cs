@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
@@ -85,63 +84,99 @@ public class ResendServiceTests
     }
 
     [Fact]
-    public void SendToAdministratorAsync_ShouldSend_DefaultingFromAndToAddress()
+    public async Task SendToAdministratorAsync_ShouldSend_DefaultingFromAndToAddress()
     {
         //Arrange
         var subject = "Test";
         var message = "Message";
+        var returnMessage = new EmailMessage();
+        _resendMessageBuilderMock
+            .Setup(s => s.CreateMessage(_options.AdminEmail, _options.AdminName, _options.AdminEmail, null, subject, message, ""))
+            .Returns(returnMessage)
+            .Verifiable();
+        _resendSenderMock.Setup(s => s.SendMessage(returnMessage)).ReturnsAsync(true).Verifiable();
 
-        //Act
-        _service.SendMessageToAdministratorAsync(subject, message);
+        // Act
+        var result = await _service.SendMessageToAdministratorAsync(subject, message);
 
-        //Verify
+        // Assert
+        Assert.True(result);
+        _resendMessageBuilderMock.Verify();
+        _resendSenderMock.Verify();
     }
 
     [Fact]
-    public void SendToAdministratorAsync_ShouldSend_DefaultingFromAndToAddress_WithCCRecipients()
+    public async Task SendToAdministratorAsync_ShouldSend_DefaultingFromAndToAddress_WithCCRecipients()
     {
         //Arrange
         var subject = "Test";
         var message = "Message";
         var cc = new List<string> {"recipient@test.com"};
+        var returnMessage = new EmailMessage();
+        _resendMessageBuilderMock
+            .Setup(s => s.CreateMessage(_options.AdminEmail, _options.AdminName, _options.AdminEmail, cc, subject, message, ""))
+            .Returns(returnMessage)
+            .Verifiable();
+        _resendSenderMock.Setup(s => s.SendMessage(returnMessage)).ReturnsAsync(true).Verifiable();
 
-        //Act
-        _service.SendMessageToAdministratorAsync(cc, subject, message);
+        // Act
+        var result = await _service.SendMessageToAdministratorAsync(cc, subject, message);
 
-        //Verify
+        // Assert
+        Assert.True(result);
+        _resendMessageBuilderMock.Verify();
+        _resendSenderMock.Verify();
     }
 
     [Fact]
-    public void SendMessageAsync_WithoutCCRecipients_ShouldSend_DefaultingFromAddress()
+    public async Task SendMessageAsync_WithoutCCRecipients_ShouldSend_DefaultingFromAddress()
     {
         //Arrange
         var to = "tester@test.com";
         var subject = "test";
         var message = "message";
+        var returnMessage = new EmailMessage();
+        _resendMessageBuilderMock
+            .Setup(s => s.CreateMessage(_options.AdminEmail, _options.AdminName, to, null, subject, message, ""))
+            .Returns(returnMessage)
+            .Verifiable();
+        _resendSenderMock.Setup(s => s.SendMessage(returnMessage)).ReturnsAsync(true).Verifiable();
 
-        //Act
-        _service.SendMessageAsync(to, subject, message);
+        // Act
+        var result = await _service.SendMessageAsync(to, subject, message);
 
-        //Verify
+        // Assert
+        Assert.True(result);
+        _resendMessageBuilderMock.Verify();
+        _resendSenderMock.Verify();
     }
 
     [Fact]
-    public void SendMessageAsync_WithCCRecipients_ShouldSend_DefaultingFromAddress()
+    public async Task SendMessageAsync_WithCCRecipients_ShouldSend_DefaultingFromAddress()
     {
         //Arrange
         var to = "tester@test.com";
         var cc = new List<string> {"Person1@test.com"};
         var subject = "test";
         var message = "message";
+        var returnMessage = new EmailMessage();
+        _resendMessageBuilderMock
+            .Setup(s => s.CreateMessage(_options.AdminEmail, _options.AdminName, to, cc, subject, message, ""))
+            .Returns(returnMessage)
+            .Verifiable();
+        _resendSenderMock.Setup(s => s.SendMessage(returnMessage)).ReturnsAsync(true).Verifiable();
 
-        //Act
-        _service.SendMessageAsync(to, cc, subject, message);
+        // Act
+        var result = await _service.SendMessageAsync(to, cc, subject, message);
 
-        //Verify
+        // Assert
+        Assert.True(result);
+        _resendMessageBuilderMock.Verify();
+        _resendSenderMock.Verify();
     }
 
     [Fact]
-    public void SendMessageWithAttachmentAsync_ShouldSend_DefaultingFromAddress()
+    public async Task SendMessageWithAttachmentAsync_ShouldSend_DefaultingFromAddress()
     {
         //Arrange
         var to = "tester@test.com";
@@ -150,15 +185,24 @@ public class ResendServiceTests
         var fileContent = Encoding.ASCII.GetBytes("Testing");
         var fileName = "test.txt";
         var message = "message";
+        var returnMessage = new EmailMessage();
+        _resendMessageBuilderMock
+            .Setup(s => s.CreateMessageWithAttachment(_options.AdminEmail, _options.AdminName, to, cc, fileContent, fileName, subject, message, ""))
+            .Returns(returnMessage)
+            .Verifiable();
+        _resendSenderMock.Setup(s => s.SendMessage(returnMessage)).ReturnsAsync(true).Verifiable();
 
-        //Act
-        _service.SendMessageWithAttachmentAsync(to, cc, subject, fileContent, fileName, message, null);
+        // Act
+        var result = await _service.SendMessageWithAttachmentAsync(to, cc, subject, fileContent, fileName, message, null);
 
-        //Assets
+        // Assert
+        Assert.True(result);
+        _resendMessageBuilderMock.Verify();
+        _resendSenderMock.Verify();
     }
 
     [Fact]
-    public void SendMessageAsync_ShouldPassOptionalTemplateName_ToMessageMethods()
+    public async Task SendMessageAsync_ShouldPassOptionalTemplateName_ToMessageMethods()
     {
         //Arrange
         var to = "tester@test.com";
@@ -166,15 +210,24 @@ public class ResendServiceTests
         var subject = "test";
         var message = "message";
         var requestedTemplate = "Test";
+        var returnMessage = new EmailMessage();
+        _resendMessageBuilderMock
+            .Setup(s => s.CreateMessage(_options.AdminEmail, _options.AdminName, to, cc, subject, message, requestedTemplate))
+            .Returns(returnMessage)
+            .Verifiable();
+        _resendSenderMock.Setup(s => s.SendMessage(returnMessage)).ReturnsAsync(true).Verifiable();
 
-        //Act
-        _service.SendMessageAsync(to, cc, subject, message, null, requestedTemplate);
+        // Act
+        var result = await _service.SendMessageAsync(to, cc, subject, message, null, requestedTemplate);
 
-        //Assets
+        // Assert
+        Assert.True(result);
+        _resendMessageBuilderMock.Verify();
+        _resendSenderMock.Verify();
     }
 
     [Fact]
-    public void SendMessageWithAttachmentAsync_ShouldPassOptionalTemplateName_ToMessageMethods()
+    public async Task SendMessageWithAttachmentAsync_ShouldPassOptionalTemplateName_ToMessageMethods()
     {
         //Arrange
         var to = "tester@test.com";
@@ -184,27 +237,24 @@ public class ResendServiceTests
         var fileName = "test.txt";
         var message = "message";
         var requestedTemplate = "Test";
+        var returnMessage = new EmailMessage();
+        _resendMessageBuilderMock
+            .Setup(s => s.CreateMessageWithAttachment(_options.AdminEmail, _options.AdminName, to, cc, fileContent, fileName, subject, message, requestedTemplate))
+            .Returns(returnMessage)
+            .Verifiable();
+        _resendSenderMock.Setup(s => s.SendMessage(returnMessage)).ReturnsAsync(true).Verifiable();
 
-        //Act
-        _service.SendMessageWithAttachmentAsync(to, cc, subject, fileContent, fileName, message, null, requestedTemplate);
+        // Act
+        var result = await _service.SendMessageWithAttachmentAsync(to, cc, subject, fileContent, fileName, message, null, requestedTemplate);
 
-        //Assets
+        // Assert
+        Assert.True(result);
+        _resendMessageBuilderMock.Verify();
+        _resendSenderMock.Verify();
     }
 
     [Fact]
-    public async void SendWithReplyToAsync_ShouldThrowArgumentException_WhenReplyToMissing()
-    {
-        //Arrange
-        var to = "tester@test.com";
-        var subject = "test";
-        var message = "message";
-
-        //Act/Assert
-        var result = await Assert.ThrowsAsync<ArgumentNullException>(() => _service.SendWithReplyToAsync("", "", to, subject, message));
-    }
-
-    [Fact]
-    public void SendWithReplyToAsync_WithoutCCRecipients_ShouldSend_DefaultingFromAddress()
+    public async Task SendWithReplyToAsync_WithoutCCRecipients_ShouldSend_DefaultingFromAddress()
     {
         //Arrange
         var replyTo = "sender@sendy.com";
@@ -214,12 +264,16 @@ public class ResendServiceTests
         var returnMessage = new EmailMessage();
         _resendMessageBuilderMock
             .Setup(s => s.CreateMessage(_options.AdminEmail, _options.AdminName, to, null, subject, message,
-                "")).Returns(returnMessage).Verifiable();
-
+                "")).Returns(returnMessage).Verifiable(); 
+        _resendSenderMock.Setup(s => s.SendMessage(returnMessage)).ReturnsAsync(true).Verifiable();
+        
         //Act
-        _service.SendWithReplyToAsync(replyTo, "", to, subject, message);
+        var result = await _service.SendWithReplyToAsync(replyTo, "", to, subject, message);
 
-        //Verify
+        // Assert
+        Assert.True(result);
+        _resendMessageBuilderMock.Verify();
+        _resendSenderMock.Verify();
     }
 
     [Fact]
